@@ -1,192 +1,141 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>动态网页示例</title>
-<style>
-    body { 
-        font-family: Arial, sans-serif;
-        margin: 0;
-        min-height: 100vh;
-        background-color: #f5f5f5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>吃瓜合集</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .container {
-        width: 100%;
-        max-width: 400px;
-        padding: 40px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-    }
-
-    /* 移动端适配 */
-    @media screen and (max-width: 480px) {
         .container {
-            padding: 20px;
+            width: 100%;
+            max-width: 400px; 
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        #logo { 
+            animation: spin 2s linear infinite; 
+            width: 100px; 
+            height: 100px; 
+            background: url('logo.png') no-repeat center; 
+            background-size: contain; 
+            margin: 0;
+        }
+
+        @keyframes spin { 
+            100% { transform: rotate(360deg); } 
+        }
+
+        #date {
+            font-size: 24px;
+            color: #333;
+            margin: 0;
+            text-align: center;
+        }
+
+        .input-group {
+            width: 100%;
+            margin: 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 20px;
         }
 
-        #logo {
-            width: 80px;
-            height: 80px;
-        }
-
-        #date {
-            font-size: 20px;
-        }
-
         #password {
-            padding: 10px 12px;
-            font-size: 14px;
+            background-color: white;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            width: 100%;
+            max-width: 250px;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        #password:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        #password::placeholder {
+            color: #999;
         }
 
         .btn {
-            padding: 10px 20px;
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0;
+            min-width: 200px;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #error-msg {
+            color: #ff4444;
+            display: none;
+            margin: 0;
             font-size: 14px;
-            min-width: 160px;
-        }
-    }
-
-    /* 大屏幕适配 */
-    @media screen and (min-width: 1200px) {
-        .container {
-            max-width: 500px;
-            padding: 50px;
+            text-align: center;
+            min-height: 20px;
         }
 
-        #logo {
-            width: 120px;
-            height: 120px;
+        .header-image {
+            width: 50px;
+            height: 50px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 0;
         }
 
-        #date {
-            font-size: 28px;
+        #wechat-tip {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            padding-top: 50px;
         }
-
-        .btn {
-            min-width: 240px;
-        }
-    }
-
-    #logo { 
-        animation: spin 2s linear infinite; 
-        width: 100px; 
-        height: 100px; 
-        background: url('logo.png') no-repeat center; 
-        background-size: contain; 
-        margin: 0;
-    }
-
-    @keyframes spin { 
-        100% { transform: rotate(360deg); } 
-    }
-
-    #date {
-        font-size: 24px;
-        color: #333;
-        margin: 0;
-        text-align: center;
-    }
-
-    .input-group {
-        width: 100%;
-        margin: 0;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-
-    #password {
-        background-color: white;
-        color: #333;
-        border: 1px solid #ddd;
-        padding: 12px 15px;
-        width: 100%;
-        max-width: 250px;
-        border-radius: 8px;
-        font-size: 16px;
-        box-sizing: border-box;
-    }
-
-    #password:focus {
-        outline: none;
-        border-color: #4CAF50;
-        box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-    }
-
-    #password::placeholder {
-        color: #999;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 12px 30px;
-        background-color: #4CAF50;
-        color: white;
-        text-decoration: none;
-        border: none;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        font-size: 16px;
-        margin: 0;
-        min-width: 200px;
-    }
-
-    .btn:hover {
-        background-color: #45a049;
-        transform: translateY(-2px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    #error-msg {
-        color: #ff4444;
-        display: none;
-        margin: 0;
-        font-size: 14px;
-        text-align: center;
-        min-height: 20px;
-    }
-
-    .header-image {
-        width: 50px;
-        height: 50px;
-        aspect-ratio: 1/1;
-        object-fit: cover;
-        display: block;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        margin: 0;
-    }
-
-    /* 添加遮罩层样式 */
-    #wechat-tip {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
-        z-index: 9999;
-        text-align: center;
-        color: white;
-        font-size: 16px;
-        padding-top: 50px;
-    }
-</style>
+    </style>
 </head>
 <body>
-    <!-- 添加微信提示遮罩层 -->
     <div id="wechat-tip">请在微信中打开链接</div>
 
     <div class="container">
@@ -210,11 +159,11 @@
         const passwordInput = document.getElementById('password');
         
         // 基础安全防护
-        document.addEventListener('contextmenu', e => e.preventDefault()); // 禁用右键
+        document.addEventListener('contextmenu', e => e.preventDefault());
         document.onkeydown = function(e) {
-            if (e.keyCode == 123) return false; // 禁用 F12
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // 禁用 Ctrl+Shift+I
-            if (e.ctrlKey && e.keyCode == 85) return false; // 禁用查看源代码
+            if (e.keyCode == 123) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
+            if (e.ctrlKey && e.keyCode == 85) return false;
         };
 
         function showError(message) {
@@ -228,7 +177,6 @@
             document.getElementById('date').textContent = `${dateString}，吃瓜合集`;
         }
 
-        // 密码输入处理
         passwordInput.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/\D/g, '');
             errorMsg.style.display = 'none';
@@ -238,7 +186,6 @@
             }
         });
 
-        // 密码验证改用后端验证
         async function checkInputPassword() {
             try {
                 const password = passwordInput.value;
@@ -265,69 +212,50 @@
                     passwordInput.value = '';
                     passwordInput.focus();
                 }
-            } catch (error) {
-                showError('网络错误，请稍后重试');
-            }
-        }
+            } 捕获（错误）{} catch (error) {
+                showError('网络错误，请稍后重试');showError('网络错误，请稍后重试');
+            }}
+        }}
 
-        // 按钮点击处理
-        async function checkPassword() {
-            try {
-                const timestamp = Date.now();
-                const response = await fetch('https://你的域名/api/getLink', {
-                    method: 'POST',
-                    headers: {
-                        'X-Timestamp': timestamp,
-                        'X-Token': await generateToken(timestamp)
-                    }
-                });
+        异步函数 checkPassword() {async function checkPassword() {
+            window.location.href = "https://www.baidu.com";location.href = "https://www.baidu.com";
+        }}
 
-                const data = await response.json();
-                if (data.success) {
-                    window.location.href = data.url;
-                }
-            } catch (error) {
-                showError('网络错误，请稍后重试');
-            }
-        }
+        异步函数 encryptPassword(密码) {async function encryptPassword(password) {
+            const 编码器 = new TextEncoder();const encoder = new TextEncoder();
+            const data = 编码器.encode(密码 + 时间戳);const data = encoder.encode(password + timestamp);
+            const hash = wait crypto.subtle.digest('SHA-256', data);const hash = await crypto.subtle.digest('SHA-256', data);
+            返回 Array.from(new Uint8Array(hash))return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))map(b => b.toString(16).padStart(2, '0'))
+                。加入（''）;join('');
+        }}
 
-        // 简单的密码加密函数
-        async function encryptPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password + timestamp);
-            const hash = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(hash))
-                .map(b => b.toString(16).padStart(2, '0'))
-                .join('');
-        }
+        异步函数generateToken（时间戳）{async function generateToken(timestamp) {
+            const key = '你的秘密密钥';const key = 'your-secret-key';
+            const data = `${timestamp}${key}`;const data = `${timestamp}${key}`;
+            const 编码器 = new TextEncoder();const encoder = new TextEncoder();
+            const hash =等待 crypto.subtle.digest('SHA-256',encoder.encode(data));const hash = await crypto.subtle.digest('SHA-256', encoder.encode(data));
+            返回 Array.from(new Uint8Array(hash))return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))map(b => b.toString(16).padStart(2, '0'))
+                。加入（''）;join('');
+        }}
 
-        // 生成请求令牌
-        async function generateToken(timestamp) {
-            const key = 'your-secret-key'; // 实际使用时应该是从配置中获取
-            const data = `${timestamp}${key}`;
-            const encoder = new TextEncoder();
-            const hash = await crypto.subtle.digest('SHA-256', encoder.encode(data));
-            return Array.from(new Uint8Array(hash))
-                .map(b => b.toString(16).padStart(2, '0'))
-                .join('');
-        }
+        // 微信环境检测
+        函数 isWechat ( )  {函数 isWechat ( )  {
+            var  ua = 导航器。用户代理。转为小写( ) ; var  ua = 导航器。用户代理。转为小写( ) ;
+            返回UA。匹配( /MicroMessenger/i ) == "micromessenger" ;返回UA。匹配( /MicroMessenger/i ) == "micromessenger" ;
+        } }
 
-        updateDate();
-        setInterval(updateDate, 60000);
+        // 页面加载时检查// 页面加载时检查
+        窗口。onload =函数( )  { onload = function ( )  {
+            if  ( ! isWechat ( ) )  { if  ( ! isWechat ( ) )  {
+getElementById('wechat-tip').style.display = 'block';getElementById('wechat-tip').style.display = 'block';
+querySelector('.container').style.display = 'none';querySelector('.container').style.display = 'none';
+            }}
+            更新日期（）；更新日期（）；
+        } }
 
-        // 添加微信环境检测
-        function isWechat() {
-            var ua = navigator.userAgent.toLowerCase();
-            return ua.match(/MicroMessenger/i) == "micromessenger";
-        }
-
-        // 页面加载时检查
-        window.onload = function() {
-            if (!isWechat()) {
-                document.getElementById('wechat-tip').style.display = 'block';
-                document.querySelector('.container').style.display = 'none';
-            }
-        }
-    </script>
-</body>
-</html> 
+        setInterval (更新日期, 60000 ) ; setInterval (更新日期, 60000 ) ;
+    </> 脚本
+</正文>
+</html>​​
