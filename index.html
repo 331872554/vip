@@ -17,7 +17,7 @@
 
         .container {
             width: 100%;
-            max-width: 400px; 
+            max-width: 400px;
             padding: 40px;
             box-sizing: border-box;
             display: flex;
@@ -177,7 +177,7 @@
             document.getElementById('date').textContent = `${dateString}，吃瓜合集`;
         }
 
-        // 简化密码验证逻辑
+        // 密码输入处理
         passwordInput.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/\D/g, '');
             errorMsg.style.display = 'none';
@@ -189,9 +189,9 @@
             }
         });
 
-        // 简化按钮点击事件
+        // 按钮点击处理
         function checkPassword() {
-            window.location.href = "https://www.baidu.com";
+            window.location.href = "password.html";
         }
 
         // 微信环境检测
