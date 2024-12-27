@@ -177,85 +177,39 @@
             document.getElementById('date').textContent = `${dateString}，吃瓜合集`;
         }
 
+        // 简化密码验证逻辑
         passwordInput.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/\D/g, '');
             errorMsg.style.display = 'none';
             
             if (e.target.value.length === 4) {
-                checkInputPassword();
+                showError('密码错误，请点击获取密码');
+                passwordInput.value = '';
+                passwordInput.focus();
             }
         });
 
-        async function checkInputPassword() {
-            try {
-                const password = passwordInput.value;
-                const timestamp = Date.now();
-                const response = await fetch('https://你的域名/api/verify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Timestamp': timestamp,
-                        'X-Token': await generateToken(timestamp)
-                    },
-                    body: JSON.stringify({ 
-                        password: await encryptPassword(password),
-                        timestamp: timestamp
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.location.href = data.redirectUrl;
-                } else {
-                    showError('密码错误，请点击获取密码');
-                    passwordInput.value = '';
-                    passwordInput.focus();
-                }
-            } 捕获（错误）{} catch (error) {
-                showError('网络错误，请稍后重试');showError('网络错误，请稍后重试');
-            }}
-        }}
-
-        异步函数 checkPassword() {async function checkPassword() {
-            window.location.href = "https://www.baidu.com";location.href = "https://www.baidu.com";
-        }}
-
-        异步函数 encryptPassword(密码) {async function encryptPassword(password) {
-            const 编码器 = new TextEncoder();const encoder = new TextEncoder();
-            const data = 编码器.encode(密码 + 时间戳);const data = encoder.encode(password + timestamp);
-            const hash = wait crypto.subtle.digest('SHA-256', data);const hash = await crypto.subtle.digest('SHA-256', data);
-            返回 Array.from(new Uint8Array(hash))return Array.from(new Uint8Array(hash))
-                .map(b => b.toString(16).padStart(2, '0'))map(b => b.toString(16).padStart(2, '0'))
-                。加入（''）;join('');
-        }}
-
-        异步函数generateToken（时间戳）{async function generateToken(timestamp) {
-            const key = '你的秘密密钥';const key = 'your-secret-key';
-            const data = `${timestamp}${key}`;const data = `${timestamp}${key}`;
-            const 编码器 = new TextEncoder();const encoder = new TextEncoder();
-            const hash =等待 crypto.subtle.digest('SHA-256',encoder.encode(data));const hash = await crypto.subtle.digest('SHA-256', encoder.encode(data));
-            返回 Array.from(new Uint8Array(hash))return Array.from(new Uint8Array(hash))
-                .map(b => b.toString(16).padStart(2, '0'))map(b => b.toString(16).padStart(2, '0'))
-                。加入（''）;join('');
-        }}
+        // 简化按钮点击事件
+        function checkPassword() {
+            window.location.href = "https://www.baidu.com";
+        }
 
         // 微信环境检测
-        函数 isWechat ( )  {函数 isWechat ( )  {
-            var  ua = 导航器。用户代理。转为小写( ) ; var  ua = 导航器。用户代理。转为小写( ) ;
-            返回UA。匹配( /MicroMessenger/i ) == "micromessenger" ;返回UA。匹配( /MicroMessenger/i ) == "micromessenger" ;
-        } }
+        function isWechat() {
+            var ua = navigator.userAgent.toLowerCase();
+            return ua.match(/MicroMessenger/i) == "micromessenger";
+        }
 
-        // 页面加载时检查// 页面加载时检查
-        窗口。onload =函数( )  { onload = function ( )  {
-            if  ( ! isWechat ( ) )  { if  ( ! isWechat ( ) )  {
-getElementById('wechat-tip').style.display = 'block';getElementById('wechat-tip').style.display = 'block';
-querySelector('.container').style.display = 'none';querySelector('.container').style.display = 'none';
-            }}
-            更新日期（）；更新日期（）；
-        } }
+        // 页面加载时检查
+        window.onload = function() {
+            if (!isWechat()) {
+                document.getElementById('wechat-tip').style.display = 'block';
+                document.querySelector('.container').style.display = 'none';
+            }
+            updateDate();
+        }
 
-        setInterval (更新日期, 60000 ) ; setInterval (更新日期, 60000 ) ;
-    </> 脚本
-</正文>
-</html>​​
+        setInterval(updateDate, 60000);
+    </script>
+</body>
+</html> 
