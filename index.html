@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>吃瓜合集</title>
+    <title>吃瓜群众</title>
     <style>
         body { 
             font-family: Arial, sans-serif;
             margin: 0;
             min-height: 100vh;
-            background-color: #f5f5f5;
+            background-color: #f8f0ea;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,12 +18,16 @@
         .container {
             width: 100%;
             max-width: 400px;
-            padding: 40px;
-            box-sizing: border-box;
+            padding: 30px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
+            gap: 20px;
         }
 
         #logo { 
@@ -32,7 +36,6 @@
             height: 100px; 
             background: url('logo.png') no-repeat center; 
             background-size: contain; 
-            margin: 0;
         }
 
         @keyframes spin { 
@@ -41,14 +44,13 @@
 
         #date {
             font-size: 24px;
+            font-weight: bold;
             color: #333;
-            margin: 0;
             text-align: center;
         }
 
         .input-group {
             width: 100%;
-            margin: 0;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -70,42 +72,22 @@
 
         #password:focus {
             outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-        }
-
-        #password::placeholder {
-            color: #999;
+            border-color: #ffd700;
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
         }
 
         .btn {
             display: inline-block;
-            padding: 12px 30px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
+            width: 80%;
+            padding: 15px;
+            background-color: #ffd700;
+            color: #333;
             border: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 16px;
-            margin: 0;
-            min-width: 200px;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        #error-msg {
-            color: #ff4444;
-            display: none;
-            margin: 0;
-            font-size: 14px;
-            text-align: center;
-            min-height: 20px;
+            position: relative;
         }
 
         .header-image {
@@ -113,31 +95,20 @@
             height: 50px;
             aspect-ratio: 1/1;
             object-fit: cover;
-            display: block;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin: 0;
         }
 
-        #wechat-tip {
+        #error-msg {
+            color: #ff4444;
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
+            font-size: 14px;
             text-align: center;
-            color: white;
-            font-size: 16px;
-            padding-top: 50px;
+            min-height: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="wechat-tip">请在微信中打开链接</div>
-
     <div class="container">
         <div id="logo"></div>
         <img src="header.jpg" alt="吃瓜图片" class="header-image">
@@ -157,14 +128,6 @@
     <script>
         const errorMsg = document.getElementById('error-msg');
         const passwordInput = document.getElementById('password');
-        
-        // 基础安全防护
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
-            if (e.ctrlKey && e.keyCode == 85) return false;
-        };
 
         function showError(message) {
             errorMsg.textContent = message;
@@ -177,7 +140,6 @@
             document.getElementById('date').textContent = `${dateString}，吃瓜合集`;
         }
 
-        // 密码输入处理
         passwordInput.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/\D/g, '');
             errorMsg.style.display = 'none';
@@ -189,26 +151,11 @@
             }
         });
 
-        // 按钮点击处理
         function checkPassword() {
             window.location.href = "password.html";
         }
 
-        // 微信环境检测
-        function isWechat() {
-            var ua = navigator.userAgent.toLowerCase();
-            return ua.match(/MicroMessenger/i) == "micromessenger";
-        }
-
-        // 页面加载时检查
-        window.onload = function() {
-            if (!isWechat()) {
-                document.getElementById('wechat-tip').style.display = 'block';
-                document.querySelector('.container').style.display = 'none';
-            }
-            updateDate();
-        }
-
+        window.onload = updateDate;
         setInterval(updateDate, 60000);
     </script>
 </body>
