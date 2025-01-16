@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>观看广告</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f0ea;
+        }
+        video {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        /* Hide video controls' seek bar */
+        video::-webkit-media-controls-timeline {
+            display: none;
+        }
+        @media (max-width: 600px) {
+            video {
+                width: 95%;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video id="adVideo" src="ad.mp4" controls autoplay onended="showPassword()"></video>
+    <script>
+        function showPassword() {
+            const password = Math.floor(1000 + Math.random() * 9000); // Generate a random four-digit number
+            sessionStorage.setItem('adPassword', password.toString()); // Store the password in sessionStorage
+            alert("广告观看完成，您的密码是: " + password);
+            window.location.href = 'index.html'; // Redirect to index.html after showing the password
+        }
+    </script>
+</body>
+</html> 
