@@ -28,33 +28,6 @@
             gap: 20px;
         }
 
-        @keyframes spin { 
-            100% { transform: rotate(360deg); } 
-        }
-
-        #date, .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .description, .note {
-            font-size: 16px;
-            color: #333;
-            line-height: 1.5;
-        }
-
-        .input-group {
-            width: 100%;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
         #password {
             font-size: 16px;
             padding: 10px;
@@ -104,20 +77,24 @@
         <div id="logo"></div>
         <img src="header.jpg" alt="呱呱图片" class="header-image">
         <p id="date"></p>
-        <div class="input-group">
-            <input type="text" id="password" placeholder="输入密码观看">
-            <p id="error-msg"></p>
-            <button class="btn" onclick="checkPassword()">点击获取密码</button>
-        </div>
+        <input type="text" id="password" placeholder="输入密码观看" oninput="validatePassword()">
+        <p id="error-msg"></p>
+        <button class="btn" onclick="window.location.href='password.html'">获取密码</button>
     </div>
 
     <script>
-        const errorMsg = document.getElementById('error-msg');
-        const passwordInput = document.getElementById('password');
-
-        function showError(message) {
-            errorMsg.textContent = message;
-            errorMsg.style.display = 'block';
+        function validatePassword() {
+            const userInput = document.getElementById('password').value;
+            if (userInput.length === 4) {
+                const correctPassword = sessionStorage.getItem('adPassword');
+                if (userInput === correctPassword) {
+                    window.location.href = 'videos.html'; // 密码正确，跳转到视频页面
+                } else {
+                    const errorMsg = document.getElementById('error-msg');
+                    errorMsg.style.display = 'block';
+                    errorMsg.textContent = '密码错误，请重新输入！';
+                }
+            }
         }
 
         function updateDate() {
@@ -126,23 +103,9 @@
             document.getElementById('date').textContent = `${dateString}，吃瓜合集`;
         }
 
-        passwordInput.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/\D/g, '');
-            errorMsg.style.display = 'none';
-            
-            if (e.target.value.length === 4) {
-                showError('密码错误，请点击获取密码');
-                passwordInput.value = '';
-                passwordInput.focus();
-            }
-        });
-
-        function checkPassword() {
-            window.location.href = "password.html";
-        }
-
         window.onload = updateDate;
         setInterval(updateDate, 60000);
     </script>
 </body>
+</html> 
 </html> 
