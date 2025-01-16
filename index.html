@@ -70,13 +70,17 @@
             text-align: center;
             min-height: 20px;
         }
+
+        #date {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="logo"></div>
         <img src="header.jpg" alt="呱呱图片" class="header-image">
-        <p id="date"></p>
+        <p id="date">1月17日，吃瓜合集</p>
         <input type="text" id="password" placeholder="输入密码观看" oninput="validatePassword()">
         <p id="error-msg"></p>
         <button class="btn" onclick="window.location.href='password.html'">获取密码</button>
@@ -107,5 +111,4 @@
         setInterval(updateDate, 60000);
     </script>
 </body>
-</html> 
 </html> 
