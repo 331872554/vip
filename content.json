@@ -1,6 +1,6 @@
 {
   "indexTitle": "小说合集",
-  "indexDateText": "小说视频合集",
+  "indexDateText": "呱呱小说",
   "indexPasswordPlaceholder": "输入密码观看",
   "indexGetPasswordBtn": "点击获取密码",
   "passwordTitle": "解锁密码规则",
@@ -21,14 +21,12 @@
       "id": "1",
       "title": "视频标题1",
       "url": "https://外部视频托管服务/video1.mp4",
-      "thumbnail": "thumbnail1.jpg",
       "description": "视频描述1"
     },
     {
       "id": "2",
       "title": "视频标题2",
       "url": "https://外部视频托管服务/video2.mp4",
-      "thumbnail": "thumbnail2.jpg",
       "description": "视频描述2"
     }
   ],
