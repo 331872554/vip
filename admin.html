@@ -1591,15 +1591,15 @@
         async function loadVideos() {
             console.log('Loading videos...');
             try {
-                const response = await fetch('/api/videos');
+                const response = await fetch('content.json');
                 console.log('Response status:', response.status);
                 
                 if (!response.ok) {
                     throw new Error('获取视频列表失败');
                 }
                 
-                const videos = await response.json();
-                console.log('Loaded videos:', videos);
+                const content = await response.json();
+                console.log('Loaded videos:', content.videos);
                 
                 // 更新表格内容
                 const videoGrid = document.querySelector('.video-grid');
@@ -1610,7 +1610,7 @@
                 
                 videoGrid.innerHTML = '';
                 
-                if (videos.length === 0) {
+                if (content.videos.length === 0) {
                     videoGrid.innerHTML = `
                         <div class="video-card">
                             <div class="card-body">
@@ -1621,9 +1621,9 @@
                     return;
                 }
                 
-                videos.forEach(video => {
+                content.videos.forEach(video => {
                     // 确保视频 URL 格式正确
-                    const videoUrl = video.videoUrl.startsWith('/') ? video.videoUrl : '/' + video.videoUrl;
+                    const videoUrl = video.url.startsWith('/') ? video.url : '/' + video.url;
                     
                     const videoCard = document.createElement('div');
                     videoCard.className = 'video-card';
@@ -1762,7 +1762,7 @@
         // 加载页面内容
         async function loadPageContent() {
             try {
-                const response = await fetch('/api/content');
+                const response = await fetch('content.json');
                 if (response.ok) {
                     pageContent = await response.json();
                     

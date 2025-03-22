@@ -239,279 +239,60 @@
     </style>
 </head>
 <body>
-    <!-- 主容器 -->
     <div class="container">
-        <!-- 页面头部 -->
-        <div class="header">
-            <h1>视频合集</h1>
-            <p id="date"></p>
-        </div>
-        
-        <!-- 搜索栏 -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="搜索视频..." oninput="filterVideos()">
-        </div>
-        
-        <!-- 分类标签 -->
-        <div class="category-tabs">
-            <div class="category-tab active" data-category="beginner" onclick="filterByCategory('beginner')">最新</div>
-            <div class="category-tab" data-category="advanced" onclick="filterByCategory('advanced')">往期</div>
-        </div>
-        
-        <!-- 视频网格 -->
-        <div class="video-grid" id="videoGrid">
-            <!-- 视频将通过JavaScript动态加载 -->
+        <h1>视频列表</h1>
+        <div id="videoList" class="video-grid">
+            <!-- 视频将在这里动态生成 -->
         </div>
     </div>
-    
-    <!-- 回到顶部按钮 -->
-    <div class="back-to-top" id="backToTop">↑</div>
 
     <script>
-        // 存储视频数据的数组
-        let videosData = [];
-        
-        /**
-         * 从服务器获取视频数据
-         */
-        async function fetchVideos() {
+        // 加载视频列表
+        async function loadVideos() {
             try {
-                const response = await fetch('/api/videos');
-                if (!response.ok) {
-                    throw new Error('获取视频失败');
-                }
-                
-                videosData = await response.json();
-                
-                // 按上传时间排序（最新的在前面）
-                videosData.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
-                
-                // 更新日期显示
-                updateDate();
-                
-                // 应用当前的过滤条件
-                const activeTab = document.querySelector('.category-tab.active');
-                if (activeTab) {
-                    filterByCategory(activeTab.dataset.category);
-                } else {
-                    renderVideos(videosData);
+                const response = await fetch('content.json');
+                if (response.ok) {
+                    const content = await response.json();
+                    const videoList = document.getElementById('videoList');
+                    
+                    // 清空现有内容
+                    videoList.innerHTML = '';
+                    
+                    // 添加视频列表
+                    content.videos.forEach(video => {
+                        const videoItem = document.createElement('div');
+                        videoItem.className = 'video-item';
+                        videoItem.innerHTML = `
+                            <div class="thumbnail">
+                                <img src="${video.thumbnail}" alt="${video.title}">
+                            </div>
+                            <h3>${video.title}</h3>
+                            <p>${video.description}</p>
+                            <button onclick="playVideo('${video.url}')">播放</button>
+                        `;
+                        videoList.appendChild(videoItem);
+                    });
                 }
             } catch (error) {
-                console.error('获取视频失败:', error);
-                document.getElementById('videoGrid').innerHTML = '<p class="no-videos">加载视频失败，请刷新重试</p>';
+                console.error('加载视频失败:', error);
             }
         }
         
-        /**
-         * 渲染视频列表
-         * @param {Array} videos - 要显示的视频数组
-         */
-        function renderVideos(videos) {
-            const videoGrid = document.getElementById('videoGrid');
-            videoGrid.innerHTML = ''; // 清空现有内容
-            
-            if (videos.length === 0) {
-                videoGrid.innerHTML = '<p class="no-videos">暂无视频</p>';
+        // 播放视频
+        function playVideo(url) {
+            window.location.href = `player.html?url=${encodeURIComponent(url)}`;
+        }
+        
+        // 页面加载时执行
+        window.onload = function() {
+            // 检查是否有密码
+            const password = sessionStorage.getItem('adPassword');
+            if (!password) {
+                window.location.href = 'index.html';
                 return;
             }
             
-            // 创建标题列表
-            const titleList = document.createElement('ul');
-            titleList.className = 'video-title-list';
-            
-            videos.forEach((video, index) => {
-                // 格式化日期
-                const uploadDate = new Date(video.uploadDate);
-                const formattedDate = `${(uploadDate.getMonth() + 1).toString().padStart(2, '0')}-${uploadDate.getDate().toString().padStart(2, '0')}`;
-                
-                // 创建标题列表项
-                const titleItem = document.createElement('li');
-                titleItem.className = 'video-title-item';
-                titleItem.dataset.index = index;
-                titleItem.innerHTML = `
-                    <div class="video-title">${video.title}</div>
-                    <div class="video-description">${video.description || ''}</div>
-                    <div class="video-date">${formattedDate}</div>
-                `;
-                
-                // 添加点击事件
-                titleItem.addEventListener('click', () => showVideoDetail(video, index));
-                
-                titleList.appendChild(titleItem);
-            });
-            
-            // 创建视频详情容器
-            const videoDetail = document.createElement('div');
-            videoDetail.className = 'video-detail';
-            videoDetail.id = 'videoDetail';
-            
-            // 将标题列表和视频详情添加到网格
-            videoGrid.appendChild(titleList);
-            videoGrid.appendChild(videoDetail);
-        }
-
-        /**
-         * 显示视频详情
-         * @param {Object} video - 视频对象
-         * @param {number} index - 视频索引
-         */
-        function showVideoDetail(video, index) {
-            const videoDetail = document.getElementById('videoDetail');
-            const titleList = document.querySelector('.video-title-list');
-            
-            // 确保视频 URL 格式正确
-            const videoUrl = video.videoUrl.startsWith('/') ? video.videoUrl : '/' + video.videoUrl;
-            
-            // 格式化日期
-            const uploadDate = new Date(video.uploadDate);
-            const formattedDate = `${(uploadDate.getMonth() + 1).toString().padStart(2, '0')}-${uploadDate.getDate().toString().padStart(2, '0')}`;
-            
-            // 更新视频详情内容
-            videoDetail.innerHTML = `
-                <button class="back-button" onclick="hideVideoDetail()">
-                    <span>←</span> 返回列表
-                </button>
-                <div class="video-title">${video.title}</div>
-                <div class="video-description">${video.description || ''}</div>
-                <div class="video-date">${formattedDate}</div>
-                <div class="video-wrapper">
-                    <video src="${videoUrl}" controls preload="metadata" 
-                           onloadstart="this.volume=0.5" 
-                           onerror="console.error('视频加载失败:', this.src)">
-                        您的浏览器不支持视频标签。
-                    </video>
-                </div>
-            `;
-            
-            // 显示视频详情，隐藏标题列表
-            videoDetail.classList.add('active');
-            titleList.style.display = 'none';
-            
-            // 滚动到顶部
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        /**
-         * 隐藏视频详情
-         */
-        function hideVideoDetail() {
-            const videoDetail = document.getElementById('videoDetail');
-            const titleList = document.querySelector('.video-title-list');
-            
-            // 隐藏视频详情，显示标题列表
-            videoDetail.classList.remove('active');
-            titleList.style.display = 'block';
-        }
-
-        /**
-         * 更新日期显示
-         */
-        function updateDate() {
-            const now = new Date();
-            const dateString = `${now.getMonth() + 1}月${now.getDate()}日`;
-            document.getElementById('date').textContent = `${dateString}更新`;
-        }
-
-        /**
-         * 按分类过滤视频
-         * @param {string} category - 视频分类
-         */
-        function filterByCategory(category) {
-            // 更新标签状态
-            const tabs = document.querySelectorAll('.category-tab');
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.dataset.category === category) {
-                    tab.classList.add('active');
-                }
-            });
-
-            // 过滤视频
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            let filteredVideos = category === 'all' 
-                ? [...videosData] 
-                : videosData.filter(video => video.category === category);
-                
-            // 如果有搜索文本，再次过滤
-            if (searchText) {
-                filteredVideos = filteredVideos.filter(video => 
-                    video.title.toLowerCase().includes(searchText) || 
-                    video.description.toLowerCase().includes(searchText)
-                );
-            }
-            
-            renderVideos(filteredVideos);
-        }
-
-        /**
-         * 搜索过滤视频
-         */
-        function filterVideos() {
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            const activeTab = document.querySelector('.category-tab.active');
-            const category = activeTab ? activeTab.dataset.category : 'all';
-            
-            let filteredVideos = category === 'all' 
-                ? [...videosData] 
-                : videosData.filter(video => video.category === category);
-                
-            filteredVideos = filteredVideos.filter(video => 
-                video.title.toLowerCase().includes(searchText) || 
-                video.description.toLowerCase().includes(searchText)
-            );
-            
-            renderVideos(filteredVideos);
-        }
-
-        /**
-         * 处理回到顶部按钮的显示和隐藏
-         */
-        window.onscroll = function() {
-            const backToTop = document.getElementById('backToTop');
-            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
-            }
-        };
-
-        /**
-         * 回到顶部按钮点击事件
-         */
-        document.getElementById('backToTop').addEventListener('click', function() {
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        });
-
-        /**
-         * 加载页面内容
-         */
-        async function loadPageContent() {
-            try {
-                const response = await fetch('/api/content');
-                if (response.ok) {
-                    const content = await response.json();
-                    
-                    // 更新页面内容
-                    document.title = content.videosTitle || '视频合集';
-                    document.querySelector('.header h1').textContent = content.videosTitle || '视频合集';
-                    document.getElementById('searchInput').placeholder = content.videosSearchPlaceholder || '搜索视频...';
-                    
-                    // 更新分类标签
-                    const tabs = document.querySelectorAll('.category-tab');
-                    tabs[0].textContent = content.videosCategoryBeginner || '最新';
-                    tabs[1].textContent = content.videosCategoryAdvanced || '往期';
-                }
-            } catch (error) {
-                console.error('加载配置失败:', error);
-            }
-        }
-
-        /**
-         * 页面加载完成后执行
-         */
-        window.onload = function() {
-            loadPageContent();
-            fetchVideos();
+            loadVideos();
         };
     </script>
 </body>
