@@ -15,5 +15,25 @@
   "videosCategoryAll": "全部",
   "videosCategoryBeginner": "入门教程",
   "videosCategoryAdvanced": "进阶教程",
-  "videosNoVideo": "暂无视频"
+  "videosNoVideo": "暂无视频",
+  "videos": [
+    {
+      "id": "1",
+      "title": "视频标题1",
+      "url": "https://外部视频托管服务/video1.mp4",
+      "thumbnail": "thumbnail1.jpg",
+      "description": "视频描述1"
+    },
+    {
+      "id": "2",
+      "title": "视频标题2",
+      "url": "https://外部视频托管服务/video2.mp4",
+      "thumbnail": "thumbnail2.jpg",
+      "description": "视频描述2"
+    }
+  ],
+  "passwords": {
+    "today": "1234",
+    "yesterday": "5678"
+  }
 }
