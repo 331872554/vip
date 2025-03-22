@@ -258,23 +258,38 @@
                     // 清空现有内容
                     videoList.innerHTML = '';
                     
+                    // 检查是否有视频
+                    if (!content.videos || content.videos.length === 0) {
+                        videoList.innerHTML = '<div class="video-card"><p>暂无视频</p></div>';
+                        return;
+                    }
+                    
                     // 添加视频列表
                     content.videos.forEach(video => {
-                        const videoItem = document.createElement('div');
-                        videoItem.className = 'video-item';
-                        videoItem.innerHTML = `
-                            <div class="thumbnail">
-                                <img src="${video.thumbnail}" alt="${video.title}">
+                        const videoCard = document.createElement('div');
+                        videoCard.className = 'video-card';
+                        
+                        // 创建视频卡片内容
+                        videoCard.innerHTML = `
+                            <div class="video-title">${video.title}</div>
+                            <div class="video-description">${video.description || '无描述'}</div>
+                            <div class="video-wrapper">
+                                <video controls>
+                                    <source src="${video.url}" type="video/mp4">
+                                    您的浏览器不支持视频标签
+                                </video>
                             </div>
-                            <h3>${video.title}</h3>
-                            <p>${video.description}</p>
-                            <button onclick="playVideo('${video.url}')">播放</button>
                         `;
-                        videoList.appendChild(videoItem);
+                        
+                        videoList.appendChild(videoCard);
                     });
+                } else {
+                    throw new Error('获取视频列表失败');
                 }
             } catch (error) {
                 console.error('加载视频失败:', error);
+                const videoList = document.getElementById('videoList');
+                videoList.innerHTML = `<div class="video-card"><p>加载视频失败: ${error.message}</p></div>`;
             }
         }
         
