@@ -1587,7 +1587,7 @@
             autoHideSidebar();
         }
         
-        // 修改视频加载函数，使用分批加载和虚拟滚动
+        // 修改视频加载函数，使用 content.json
         async function loadVideos() {
             console.log('Loading videos...');
             try {
@@ -1601,7 +1601,7 @@
                 const content = await response.json();
                 console.log('Loaded videos:', content.videos);
                 
-                // 更新表格内容
+                // 更新视频网格
                 const videoGrid = document.querySelector('.video-grid');
                 if (!videoGrid) {
                     console.error('Video grid element not found');
@@ -1667,96 +1667,6 @@
                     `;
                 }
             }
-        }
-        
-        // 优化分页渲染
-        function renderPagination() {
-            const pagination = document.getElementById('videos-pagination');
-            const totalPages = Math.ceil(filteredVideos.length / itemsPerPage);
-            
-            // 如果只有一页，不显示分页
-            if (totalPages <= 1) {
-                pagination.innerHTML = '';
-                return;
-            }
-            
-            const fragment = document.createDocumentFragment();
-            
-            // 添加上一页按钮
-            const prevBtn = document.createElement('button');
-            prevBtn.className = `page-btn ${currentPage === 1 ? 'disabled' : ''}`;
-            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
-            prevBtn.disabled = currentPage === 1;
-            prevBtn.onclick = () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderVideos();
-                }
-            };
-            fragment.appendChild(prevBtn);
-            
-            // 计算要显示的页码范围
-            let startPage = Math.max(1, currentPage - 2);
-            let endPage = Math.min(totalPages, startPage + 4);
-            
-            if (endPage - startPage < 4) {
-                startPage = Math.max(1, endPage - 4);
-            }
-            
-            // 添加页码按钮
-            for (let i = startPage; i <= endPage; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
-                pageBtn.textContent = i;
-                pageBtn.onclick = () => {
-                    currentPage = i;
-                    renderVideos();
-                    // 滚动到顶部
-                    document.getElementById('videos-tab').scrollIntoView({ behavior: 'smooth' });
-                };
-                fragment.appendChild(pageBtn);
-            }
-            
-            // 添加下一页按钮
-            const nextBtn = document.createElement('button');
-            nextBtn.className = `page-btn ${currentPage === totalPages ? 'disabled' : ''}`;
-            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-            nextBtn.disabled = currentPage === totalPages;
-            nextBtn.onclick = () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderVideos();
-                }
-            };
-            fragment.appendChild(nextBtn);
-            
-            // 一次性更新DOM
-            pagination.innerHTML = '';
-            pagination.appendChild(fragment);
-        }
-        
-        // 优化搜索功能
-        let searchTimeout;
-        function searchVideos() {
-            // 清除之前的定时器
-            clearTimeout(searchTimeout);
-            
-            // 设置新的定时器，防止频繁搜索
-            searchTimeout = setTimeout(() => {
-                const searchText = document.getElementById('video-search').value.toLowerCase();
-                
-                // 使用过滤器筛选视频
-                filteredVideos = videos.filter(video => {
-                    return video.title.toLowerCase().includes(searchText) || 
-                           (video.description && video.description.toLowerCase().includes(searchText));
-                });
-                
-                // 重置到第一页
-                currentPage = 1;
-                
-                // 渲染结果
-                renderVideos();
-            }, 300); // 300ms延迟，减少频繁渲染
         }
         
         // 加载页面内容
