@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>观看广告</title>
+    <title>开始观看</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,11 +36,31 @@
 <body>
     <video id="adVideo" src="ad.mp4" controls autoplay onended="showPassword()"></video>
     <script>
+        async function loadPageContent() {
+            try {
+                const response = await fetch('/api/content');
+                if (response.ok) {
+                    const content = await response.json();
+                    
+                    // 更新页面内容
+                    document.title = content.adTitle || '观看广告';
+                    document.getElementById('complete-text').textContent = content.adCompleteText || '广告观看完成，您的密码是:';
+                }
+            } catch (error) {
+                console.error('加载配置失败:', error);
+            }
+        }
+
+        // 页面加载时执行
+        window.onload = function() {
+            loadPageContent();
+        };
+
         function showPassword() {
-            const password = Math.floor(1000 + Math.random() * 9000); // Generate a random four-digit number
-            sessionStorage.setItem('adPassword', password.toString()); // Store the password in sessionStorage
+            const password = Math.floor(1000 + Math.random() * 9000);
+            sessionStorage.setItem('adPassword', password.toString());
             alert("广告观看完成，您的密码是: " + password);
-            window.location.href = 'index.html'; // Redirect to index.html after showing the password
+            window.location.href = '/index.html';
         }
     </script>
 </body>

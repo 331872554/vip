@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>管理后台</title>
+    <!-- 使用本地字体文件 -->
+    <style>
+        @font-face {
+            font-family: 'Admin Font';
+            src: local('Arial');
+            font-display: swap;
+        }
+    </style>
+    <!-- 使用本地 Font Awesome -->
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #eef2ff;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-light: #718096;
+            --border-color: #e2e8f0;
+            --bg-gray: #f7fafc;
+            --header-height: 70px;
+            --sidebar-width: 240px;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Admin Font', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--bg-gray);
+            color: var(--text-primary);
+        }
+
+        /* 顶部导航栏 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: white;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            padding-left: 50px;  /* 调整左侧间距，可以根据需要修改这个值 */
+        }
+
+        .header-left h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;  /* 移除内边距 */
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            padding-right: 50px;  /* 调整右侧间距 */
+        }
+
+        .logout-btn {
+            padding: 8px 18px;
+            border-radius: 8px;
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        .logout-btn i {
+            margin-right: 8px;
+        }
+
+        /* 主容器 */
+        .container {
+            margin-top: var(--header-height);
+            display: flex;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: transparent;
+            overflow-y: auto;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .tabs {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .tab {
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .tab:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .tab:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .tab:hover i {
+            color: var(--primary-color);
+        }
+
+        .tab.active {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .tab.active i {
+            color: var(--primary-color);
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            width: calc(100% - var(--sidebar-width));
+            background-color: transparent;
+            min-height: calc(100vh - var(--header-height));
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 页面标题区域 */
+        .page-header {
+            margin-bottom: 30px;
+            padding: 20px 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* 内容区域 */
+        .tab-content {
+            flex: 1;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 表单区域 */
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 30px 40px;  /* 增加左右内边距 */
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .form-section h3 {
+            color: var(--text-primary);
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: none;
+        }
+
+        th {
+            background: var(--bg-gray);
+            padding: 16px 20px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: var(--primary-light);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            height: 40px;
+            padding: 0 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3651d4;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .save-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 30px;  /* 增加按钮的左右内边距 */
+            border-radius: 8px;
+            border: none;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(67, 97, 238, 0.2);
+            width: auto;  /* 按钮宽度自适应内容 */
+            min-width: 20px;  /* 设置最小宽度 */
+        }
+
+        .save-btn:hover {
+            background: #3651d4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+        }
+
+        /* 表单组件样式 */
+        .form-group {
+            margin-bottom: 25px;
+            padding: 10px 15px;  /* 添加输入框组的左右内边距 */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            padding-left: 5px;  /* 标签文字左侧缩进 */
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;  /* 增加输入框内部左右间距 */
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: var(--transition);
+            background-color: #fff;
+            color: var(--text-primary);
+            margin: 0;  /* 重置外边距 */
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            outline: none;
+        }
+
+        /* 搜索框样式 */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 400px;  /* 增加搜索框宽度 */
+            margin-right: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px 15px;  /* 调整内边距使搜索框更高 */
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 300px;  /* 设置最小宽度 */
+        }
+
+        .search-box input:focus {
+            background-color: white;
+            border: 1px solid var(--primary-color);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .page-btn:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .page-btn.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--danger-color);
+        }
+
+        /* 进度条样式 */
+        .progress-bar {
+            height: 8px;
+            background-color: var(--bg-gray);
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 260px;
+                --header-height: 60px;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                width: var(--sidebar-width);
+                height: 100%;
+                background: white;
+                z-index: 1001;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+                width: 100%;
+            }
+
+            /* 添加菜单按钮 */
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 1001;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px;
+                cursor: pointer;
+            }
+
+            /* 遮罩层 */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 99;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            /* 调整头部样式 */
+            .header-left {
+                padding-left: 50px;  /* 为菜单按钮留出空间 */
+            }
+
+            .header-left h1 {
+                font-size: 18px;
+            }
+
+            .header-right {
+                padding-right: 10px;
+            }
+
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            /* 调整表格响应式 */
+            .card-body {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;  /* iOS 滚动优化 */
+            }
+
+            table {
+                min-width: 500px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .tab:not(:last-child) {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .submenu {
+                position: static;
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .search-box input {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+
+        #login-container.login-container {
+            display: flex;
+            justify-content: flex-end;  /* 将登录框移至右侧 */
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4361ee 0%, #3651d3 100%);
+            padding: 20px;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .form-actions .btn {
+            min-width: 120px;
+            height: 44px;
+            font-size: 15px;
+        }
+
+        .form-actions .btn i {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .batch-actions {
+            margin-bottom: 20px;
+        }
+
+        .video-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        #select-all {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* 修改视频管理页面的工具栏样式 */
+        .tools-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;  /* 平均分配空间 */
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* 子菜单样式 */
+        .submenu {
+            display: none;
+            padding: 10px 0;
+            background: var(--bg-gray);
+            border-top: 1px solid var(--border-color);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;  /* 使用全宽 */
+            z-index: 1000;
+            box-shadow: var(--card-shadow);
+        }
+
+        .tab.active .submenu {
+            display: block;
+        }
+
+        .submenu-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .submenu-item:hover {
+            color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .submenu-item.active {
+            color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .submenu-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* 设置页面内容区域 */
+        .settings-content {
+            display: none;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        /* 登录页面样式 */
+        .login-container {
+            display: flex;
+            justify-content: flex-end;  /* 将登录框移至右侧 */
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4361ee 0%, #3651d3 100%);
+            padding: 20px;
+        }
+
+        .login-form {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            margin-right: 100px;  /* 添加右侧间距 */
+            position: relative;
+            animation: slideUp 0.5s ease;
+        }
+
+        .login-form h2 {
+            color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .login-form h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 25px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .login-form input {
+            width: 260px;  /* 设置输入框固定宽度 */
+            padding: 14px 20px 14px 45px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            color: var(--text-primary);
+            transition: var(--transition);
+            background: white;
+        }
+
+        .login-form input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .login-form .form-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .login-form .form-group:focus-within i {
+            color: var(--primary-color);
+        }
+
+        .login-btn {
+            width: 260px;
+            margin: 0 auto;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 8px 16px rgba(67, 97, 238, 0.25);
+            margin-top: 10px;
+            display: block;  /* 确保按钮是块级元素 */
+        }
+
+        .login-btn:hover {
+            background: #3651d3;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(67, 97, 238, 0.35);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 保存按钮容器 */
+        .form-section .btn-container {
+            padding: 0 15px;  /* 与输入框组保持一致的左右内边距 */
+            margin-top: 30px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .login-container {
+                justify-content: center;  /* 在移动端居中显示 */
+            }
+            
+            .login-form {
+                margin-right: 0;  /* 移除右侧间距 */
+            }
+        }
+
+        /* 超小屏幕适配 */
+        @media (max-width: 375px) {
+            .header-left h1 {
+                font-size: 16px;
+            }
+
+            .logout-btn {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+
+            .login-form input {
+                width: 220px;
+            }
+
+            .login-btn {
+                width: 220px;
+            }
+        }
+
+        /* 添加触摸优化 */
+        @media (hover: none) {
+            .btn:active {
+                transform: scale(0.98);
+            }
+
+            .tab:active,
+            .submenu-item:active {
+                background-color: var(--primary-light);
+            }
+        }
+
+        /* 暗黑模式支持 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a;
+                color: #ffffff;
+            }
+
+            .card,
+            .modal-content,
+            .sidebar,
+            header {
+                background-color: #2d2d2d;
+            }
+
+            input, select, textarea {
+                background-color: #333333;
+                color: #ffffff;
+                border-color: #4a4a4a;
+            }
+        }
+
+        /* 安全区域适配 (iPhone X 及以上) */
+        @supports (padding: max(0px)) {
+            .header {
+                padding-top: max(var(--header-height), env(safe-area-inset-top));
+            }
+
+            .sidebar {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+
+            .main-content {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* 响应式布局调整 */
+        @media (max-width: 768px) {
+            /* 头部样式调整 */
+            header {
+                padding: 0 15px;
+            }
+
+            .header-left {
+                padding-left: 60px;  /* 为移动端菜单按钮留出空间 */
+            }
+
+            .header-left h1 {
+                font-size: 18px;
+                padding: 0;
+            }
+
+            .header-right {
+                padding-right: 15px;
+            }
+
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            /* 侧边栏调整 */
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                width: 80%;
+                max-width: 300px;
+                height: 100%;
+                transition: left 0.3s ease;
+                z-index: 1001;
+                background: white;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            /* 遮罩层 */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            /* 主内容区域调整 */
+            .main-content {
+                margin-left: 0;
+                padding: 20px 15px;
+                width: 100%;
+            }
+
+            /* 工具栏调整 */
+            .tools-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .search-box {
+                width: 100%;
+                order: -1;  /* 搜索框放在最上面 */
+                margin-right: 0;
+            }
+
+            .search-box input {
+                width: 100%;
+                min-width: unset;
+            }
+
+            /* 按钮调整 */
+            .btn {
+                width: 100%;  /* 按钮占满宽度 */
+                margin-bottom: 10px;
+            }
+
+            /* 表格响应式 */
+            .card-body {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;  /* iOS 滚动优化 */
+            }
+
+            #videos-table {
+                min-width: 600px;  /* 确保表格内容完整显示 */
+            }
+
+            /* 表单区域调整 */
+            .form-section {
+                padding: 20px 15px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            /* 上传模态框调整 */
+            .modal-content {
+                width: 90%;
+                margin: 20px auto;
+                padding: 20px;
+                max-height: 80vh;
+            }
+
+            /* 分页按钮调整 */
+            .pagination {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .page-btn {
+                padding: 8px 12px;
+                min-width: 36px;
+            }
+        }
+
+        /* 超小屏幕适配 (iPhone SE 等) */
+        @media (max-width: 375px) {
+            .header-left h1 {
+                font-size: 16px;
+            }
+
+            .logout-btn {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+
+            .modal-content {
+                padding: 15px;
+            }
+
+            .form-group label {
+                font-size: 14px;
+            }
+
+            .login-form input,
+            .login-btn {
+                width: 220px;
+            }
+        }
+
+        /* 触摸设备优化 */
+        @media (hover: none) {
+            .btn:active,
+            .tab:active,
+            .page-btn:active {
+                transform: scale(0.98);
+            }
+
+            .form-section input:focus,
+            .form-section select:focus,
+            .form-section textarea:focus {
+                font-size: 16px;  /* 防止 iOS 缩放 */
+            }
+        }
+
+        /* iOS 安全区域适配 */
+        @supports (padding: max(0px)) {
+            .header {
+                padding-top: max(0px, env(safe-area-inset-top));
+            }
+
+            .sidebar {
+                padding-bottom: max(0px, env(safe-area-inset-bottom));
+            }
+
+            .main-content {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* 视频网格布局优化 */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        /* 视频卡片样式优化 */
+        .video-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .video-card .card-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .video-info {
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            margin-top: auto; /* 将按钮推到底部 */
+        }
+
+        /* 视频容器样式优化 - 进一步调整 */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 恢复标准 16:9 比例 */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 10px; /* 添加底部间距 */
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 改为 contain 确保视频完整显示 */
+            background-color: #000; /* 添加黑色背景 */
+        }
+
+        /* 移动端适配优化 */
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 15px;
+            }
+            
+            .video-wrapper {
+                padding-bottom: 35%; /* 在移动端进一步降低高度比例 */
+            }
+            
+            .video-wrapper video {
+                max-height: 120px; /* 移动端进一步限制最大高度 */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 10px;
+            }
+            
+            .video-wrapper {
+                padding-bottom: 30%; /* 在小屏幕手机上更进一步降低高度比例 */
+            }
+            
+            .video-wrapper video {
+                max-height: 100px; /* 小屏幕手机上进一步限制最大高度 */
+            }
+        }
+
+        /* 视频卡片中的复选框样式 */
+        .video-checkbox-wrapper {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .video-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-container" class="login-container" style="display: none;">
+        <div class="login-form">
+            <h2>管理员登录</h2>
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" placeholder="请输入管理员账号">
+            </div>
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="请输入管理员密码">
+            </div>
+            <button class="login-btn" onclick="login()">登录</button>
+        </div>
+    </div>
+
+    <div id="admin-container" style="display: none;">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <header>
+            <div class="header-left">
+                <h1>管理后台</h1>
+            </div>
+            <div class="header-right">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> 退出登录
+                </button>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- 侧边栏菜单 -->
+            <div class="sidebar">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('videos', this)">
+                        <i class="fas fa-video"></i> 视频管理
+                    </div>
+                    <div class="tab" onclick="switchTab('settings', this)">
+                        <i class="fas fa-cog"></i> 网站设置
+                        <div class="submenu">
+                            <div class="submenu-item" onclick="switchSettingsTab('index', event)">
+                                <i class="fas fa-home"></i> 首页
+                            </div>
+                            <div class="submenu-item" onclick="switchSettingsTab('password', event)">
+                                <i class="fas fa-key"></i> 密码页面
+                            </div>
+                            <div class="submenu-item" onclick="switchSettingsTab('ad', event)">
+                                <i class="fas fa-ad"></i> 广告页面
+                            </div>
+                            <div class="submenu-item" onclick="switchSettingsTab('videos', event)">
+                                <i class="fas fa-play"></i> 视频页面
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主要内容区域 -->
+            <div class="main-content">
+                <!-- 页面标题和操作区 -->
+                <div class="page-header">
+                    <h1 class="page-title" id="currentPageTitle">视频管理</h1>
+                    <div class="page-actions">
+                        <!-- 根据不同页面显示不同的操作按钮 -->
+                    </div>
+                </div>
+
+                <!-- 视频管理页面 -->
+                <div id="videos-tab" class="tab-content" style="display: block;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>视频列表</h3>
+                            <div class="tools-container">
+                                <div class="search-box">
+                                    <input type="text" placeholder="搜索视频..." oninput="filterVideos(this.value)">
+                                </div>
+                                <button class="btn btn-primary" onclick="showUploadModal()">
+                                    <i class="fas fa-upload"></i> 上传视频
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteSelectedVideos()">
+                                    <i class="fas fa-trash"></i> 批量删除
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="video-grid">
+                                <!-- 视频卡片将在这里动态加载 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 网站设置页面 -->
+                <div id="settings-tab" class="tab-content" style="display: none;">
+                    <div id="index-settings" class="settings-content active">
+                        <div class="form-section">
+                            <h3>首页设置</h3>
+                            <div class="form-group">
+                                <label for="index-title">标题</label>
+                                <input type="text" id="index-title" value="呱呱基地">
+                            </div>
+                            <div class="form-group">
+                                <label>日期文本</label>
+                                <input type="text" id="index-date-text" value="教程合集">
+                            </div>
+                            <div class="form-group">
+                                <label>密码输入框提示文字</label>
+                                <input type="text" id="index-password-placeholder" value="输入密码观看">
+                            </div>
+                            <div class="form-group">
+                                <label>获取密码按钮文字</label>
+                                <input type="text" id="index-get-password-btn" value="获取密码">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="password-settings" class="settings-content">
+                        <div class="form-section">
+                            <h3>密码页面设置</h3>
+                            <div class="form-group">
+                                <label for="password-title">标题</label>
+                                <input type="text" id="password-title">
+                            </div>
+                            <div class="form-group">
+                                <label>页面描述</label>
+                                <input type="text" id="password-description" value="点击"开始解锁"，观看激励广告后自动解锁密码🔓！">
+                            </div>
+                            <div class="form-group">
+                                <label>页面注释</label>
+                                <input type="text" id="password-note" value="(更新不易，谢谢支持！)">
+                            </div>
+                            <div class="form-group">
+                                <label>解锁按钮文字</label>
+                                <input type="text" id="password-unlock-btn" value="开始解锁">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ad-settings" class="settings-content">
+                        <div class="form-section">
+                            <h3>广告页面设置</h3>
+                            <div class="form-group">
+                                <label for="ad-title">标题</label>
+                                <input type="text" id="ad-title">
+                            </div>
+                            <div class="form-group">
+                                <label>广告完成提示文字</label>
+                                <input type="text" id="ad-complete-text" value="广告观看完成，您的密码是:">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="videos-settings" class="settings-content">
+                        <div class="form-section">
+                            <h3>视频页面设置</h3>
+                            <div class="form-group">
+                                <label for="videos-title">标题</label>
+                                <input type="text" id="videos-title">
+                            </div>
+                            <div class="form-group">
+                                <label>搜索框提示文字</label>
+                                <input type="text" id="videos-search-placeholder" value="搜索视频...">
+                            </div>
+                            <div class="form-group">
+                                <label>全部分类文字</label>
+                                <input type="text" id="videos-category-all" value="全部">
+                            </div>
+                            <div class="form-group">
+                                <label>入门分类文字</label>
+                                <input type="text" id="videos-category-beginner" value="入门教程">
+                            </div>
+                            <div class="form-group">
+                                <label>进阶分类文字</label>
+                                <input type="text" id="videos-category-advanced" value="进阶教程">
+                            </div>
+                            <div class="form-group">
+                                <label>暂无视频提示文字</label>
+                                <input type="text" id="videos-no-video" value="暂无视频">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 保存按钮始终显示在底部 -->
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="saveContent()">
+                            <i class="fas fa-save"></i> 保存修改
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 编辑视频弹窗 -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>编辑视频</h2>
+            
+            <div class="form-group">
+                <label for="edit-title">视频标题</label>
+                <input type="text" id="edit-title">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-description">视频描述</label>
+                <textarea id="edit-description"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-category">视频分类</label>
+                <select id="edit-category">
+                    <option value="beginner">入门教程</option>
+                    <option value="advanced">进阶教程</option>
+                </select>
+            </div>
+            
+            <input type="hidden" id="edit-id">
+            <button class="save-btn" onclick="updateVideo()">保存修改</button>
+        </div>
+    </div>
+
+    <!-- 添加上传视频弹窗 -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeUploadModal()">&times;</span>
+            <h3>上传视频</h3>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="upload-title">视频标题</label>
+                    <input type="text" id="upload-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="upload-description">视频描述（可选）</label>
+                    <textarea id="upload-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="upload-category">分类</label>
+                    <select id="upload-category">
+                        <option value="beginner">最新</option>
+                        <option value="advanced">往期</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="upload-video">选择视频</label>
+                    <input type="file" id="upload-video" name="video" accept="video/*" class="form-control" multiple>
+                </div>
+                <div id="upload-progress-bar" class="progress-bar">
+                    <div id="upload-progress" class="progress"></div>
+                </div>
+                <div id="upload-status"></div>
+                <button type="submit" class="btn btn-primary">上传</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let videos = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let filteredVideos = [];
+        let pageContent = {};
+        
+        /**
+         * 检查登录状态
+         * 如果未登录则跳转到登录页面
+         */
+        function checkLogin() {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+            document.getElementById('login-container').style.display = isLoggedIn ? 'none' : 'block';
+            document.getElementById('admin-container').style.display = isLoggedIn ? 'block' : 'none';
+            
+            if (isLoggedIn) {
+                loadVideos();
+                loadPageContent();
+            }
+        }
+        
+        /**
+         * 登录
+         */
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // 简单的验证，实际应用中应该使用服务器验证
+            if (username === 'admin' && password === 'admin123') {
+                localStorage.setItem('adminLoggedIn', 'true');
+                checkLogin();
+            } else {
+                alert('用户名或密码错误');
+            }
+        }
+        
+        /**
+         * 退出登录
+         */
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('currentAdminTab'); // 清除保存的标签
+            localStorage.removeItem('adminToken');      // 清除登录令牌
+            checkLogin();
+        }
+        
+        /**
+         * 切换标签页
+         * @param {string} tabName - 要显示的标签页名称
+         * @param {HTMLElement} element - 被点击的标签元素
+         */
+        function switchTab(tabName, element) {
+            // 保存当前标签到本地存储
+            localStorage.setItem('currentAdminTab', tabName);
+            
+            // 更新标签状态
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            if (element) {
+                element.classList.add('active');
+            }
+            
+            // 更新页面标题
+            const titles = {
+                'videos': '视频管理',
+                'settings': '网站设置'
+            };
+            document.getElementById('currentPageTitle').textContent = titles[tabName];
+            
+            // 隐藏所有内容区域
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // 显示选中的内容区域
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+                
+                // 如果点击的是网站设置，自动显示第一个设置页面
+                if (tabName === 'settings') {
+                    // 激活第一个子菜单
+                    const firstSubmenuItem = document.querySelector('.submenu-item');
+                    firstSubmenuItem.classList.add('active');
+                    
+                    // 显示首页设置内容
+                    document.querySelectorAll('.settings-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById('index-settings').classList.add('active');
+                    
+                    // 更新页面标题
+                    document.getElementById('currentPageTitle').textContent = '首页设置';
+                }
+            }
+            
+            autoHideSidebar();
+        }
+        
+        // 修改视频加载函数，使用分批加载和虚拟滚动
+        async function loadVideos() {
+            console.log('Loading videos...');
+            try {
+                const response = await fetch('/api/videos');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('获取视频列表失败');
+                }
+                
+                const videos = await response.json();
+                console.log('Loaded videos:', videos);
+                
+                // 更新表格内容
+                const videoGrid = document.querySelector('.video-grid');
+                if (!videoGrid) {
+                    console.error('Video grid element not found');
+                    return;
+                }
+                
+                videoGrid.innerHTML = '';
+                
+                if (videos.length === 0) {
+                    videoGrid.innerHTML = `
+                        <div class="video-card">
+                            <div class="card-body">
+                                <p style="text-align: center;">暂无视频</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                videos.forEach(video => {
+                    // 确保视频 URL 格式正确
+                    const videoUrl = video.videoUrl.startsWith('/') ? video.videoUrl : '/' + video.videoUrl;
+                    
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'video-card';
+                    videoCard.innerHTML = `
+                        <div class="video-checkbox-wrapper">
+                            <input type="checkbox" class="video-checkbox" value="${video.id}">
+                        </div>
+                        <div class="card-body">
+                            <div class="video-wrapper">
+                                <video src="${videoUrl}" controls preload="metadata">
+                                    <source src="${videoUrl}" type="video/mp4">
+                                    您的浏览器不支持视频标签
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-title">${video.title}</div>
+                                <div class="video-description">${video.description || '无'}</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-danger" onclick="deleteVideo('${video.id}')">
+                                    <i class="fas fa-trash"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    videoGrid.appendChild(videoCard);
+                });
+            } catch (error) {
+                console.error('加载视频列表失败:', error);
+                // 显示错误信息给用户
+                const videoGrid = document.querySelector('.video-grid');
+                if (videoGrid) {
+                    videoGrid.innerHTML = `
+                        <div class="video-card">
+                            <div class="card-body">
+                                <p style="text-align: center; color: red;">
+                                    加载失败: ${error.message}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // 优化分页渲染
+        function renderPagination() {
+            const pagination = document.getElementById('videos-pagination');
+            const totalPages = Math.ceil(filteredVideos.length / itemsPerPage);
+            
+            // 如果只有一页，不显示分页
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            const fragment = document.createDocumentFragment();
+            
+            // 添加上一页按钮
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `page-btn ${currentPage === 1 ? 'disabled' : ''}`;
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderVideos();
+                }
+            };
+            fragment.appendChild(prevBtn);
+            
+            // 计算要显示的页码范围
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+            
+            // 添加页码按钮
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    renderVideos();
+                    // 滚动到顶部
+                    document.getElementById('videos-tab').scrollIntoView({ behavior: 'smooth' });
+                };
+                fragment.appendChild(pageBtn);
+            }
+            
+            // 添加下一页按钮
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `page-btn ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderVideos();
+                }
+            };
+            fragment.appendChild(nextBtn);
+            
+            // 一次性更新DOM
+            pagination.innerHTML = '';
+            pagination.appendChild(fragment);
+        }
+        
+        // 优化搜索功能
+        let searchTimeout;
+        function searchVideos() {
+            // 清除之前的定时器
+            clearTimeout(searchTimeout);
+            
+            // 设置新的定时器，防止频繁搜索
+            searchTimeout = setTimeout(() => {
+                const searchText = document.getElementById('video-search').value.toLowerCase();
+                
+                // 使用过滤器筛选视频
+                filteredVideos = videos.filter(video => {
+                    return video.title.toLowerCase().includes(searchText) || 
+                           (video.description && video.description.toLowerCase().includes(searchText));
+                });
+                
+                // 重置到第一页
+                currentPage = 1;
+                
+                // 渲染结果
+                renderVideos();
+            }, 300); // 300ms延迟，减少频繁渲染
+        }
+        
+        // 加载页面内容
+        async function loadPageContent() {
+            try {
+                const response = await fetch('/api/content');
+                if (response.ok) {
+                    pageContent = await response.json();
+                    
+                    // 填充表单
+                    document.getElementById('index-title').value = pageContent.indexTitle || '呱呱基地';
+                    document.getElementById('index-date-text').value = pageContent.indexDateText || '教程合集';
+                    document.getElementById('index-password-placeholder').value = pageContent.indexPasswordPlaceholder || '输入密码观看';
+                    document.getElementById('index-get-password-btn').value = pageContent.indexGetPasswordBtn || '获取密码';
+                    document.getElementById('password-title').value = pageContent.passwordTitle || '解锁密码';
+                    document.getElementById('password-description').value = pageContent.passwordDescription || '点击"开始解锁"，观看激励广告后自动解锁密码🔓！';
+                    document.getElementById('password-note').value = pageContent.passwordNote || '(更新不易，谢谢支持！)';
+                    document.getElementById('password-unlock-btn').value = pageContent.passwordUnlockBtn || '开始解锁';
+                    document.getElementById('ad-title').value = pageContent.adTitle || '观看广告';
+                    document.getElementById('ad-complete-text').value = pageContent.adCompleteText || '广告观看完成，您的密码是:';
+                    document.getElementById('videos-title').value = pageContent.videosTitle || '视频教程合集';
+                    document.getElementById('videos-search-placeholder').value = pageContent.videosSearchPlaceholder || '搜索视频...';
+                    document.getElementById('videos-category-beginner').value = pageContent.videosCategoryBeginner || '最新';
+                    document.getElementById('videos-category-advanced').value = pageContent.videosCategoryAdvanced || '往期';
+                    document.getElementById('videos-no-video').value = pageContent.videosNoVideo || '暂无视频';
+                }
+            } catch (error) {
+                console.error('获取页面内容失败:', error);
+            }
+        }
+        
+        // 保存页面内容
+        async function saveContent() {
+            try {
+                const content = {
+                    indexTitle: document.getElementById('index-title').value,
+                    indexDateText: document.getElementById('index-date-text').value,
+                    indexPasswordPlaceholder: document.getElementById('index-password-placeholder').value,
+                    indexGetPasswordBtn: document.getElementById('index-get-password-btn').value,
+                    passwordTitle: document.getElementById('password-title').value,
+                    passwordDescription: document.getElementById('password-description').value,
+                    passwordNote: document.getElementById('password-note').value,
+                    passwordUnlockBtn: document.getElementById('password-unlock-btn').value,
+                    adTitle: document.getElementById('ad-title').value,
+                    adCompleteText: document.getElementById('ad-complete-text').value,
+                    videosTitle: document.getElementById('videos-title').value,
+                    videosSearchPlaceholder: document.getElementById('videos-search-placeholder').value,
+                    videosCategoryBeginner: document.getElementById('videos-category-beginner').value,
+                    videosCategoryAdvanced: document.getElementById('videos-category-advanced').value,
+                    videosNoVideo: document.getElementById('videos-no-video').value
+                };
+                
+                const response = await fetch('/api/content', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(content)
+                });
+                
+                if (response.ok) {
+                    alert('保存成功！');
+                } else {
+                    alert('保存失败，请重试！');
+                }
+            } catch (error) {
+                console.error('保存失败:', error);
+                alert('保存失败，请重试！');
+            }
+        }
+        
+        // 保存系统设置
+        async function saveSettings() {
+            const password = document.getElementById('admin-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+            
+            if (password && password.length < 6) {
+                alert('密码长度不能少于6位');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('保存设置失败');
+                }
+                
+                alert('设置保存成功');
+                document.getElementById('admin-password').value = '';
+                document.getElementById('confirm-password').value = '';
+            } catch (error) {
+                console.error('保存设置失败:', error);
+                alert('保存设置失败: ' + error.message);
+            }
+        }
+        
+        // 处理视频上传
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('upload-title').value;
+            const description = document.getElementById('upload-description').value;
+            const category = document.getElementById('upload-category').value;
+            const videoFiles = document.getElementById('upload-video').files;
+            
+            // 修改验证逻辑
+            if (!title || videoFiles.length === 0) {  // 只检查标题和视频文件，描述是可选的
+                alert('请填写视频标题并选择视频文件');
+                return;
+            }
+            
+            // 显示进度条和状态
+            const progressBar = document.getElementById('upload-progress-bar');
+            const progress = document.getElementById('upload-progress');
+            const statusDiv = document.getElementById('upload-status');
+            progressBar.style.display = 'block';
+            statusDiv.innerHTML = '<p>开始上传，请稍候...</p>';
+            
+            // 记录上传成功和失败的文件
+            let successCount = 0;
+            let failCount = 0;
+            const totalFiles = videoFiles.length;
+            
+            // 逐个上传文件
+            for (let i = 0; i < videoFiles.length; i++) {
+                const videoFile = videoFiles[i];
+                const fileTitle = videoFiles.length > 1 ? `${title} (${i+1})` : title;
+                
+                try {
+                    // 更新状态
+                    statusDiv.innerHTML += `<p>正在上传 ${i+1}/${totalFiles}: ${videoFile.name}</p>`;
+                    
+                    // 创建表单数据
+                    const formData = new FormData();
+                    formData.append('title', fileTitle);
+                    formData.append('description', description);
+                    formData.append('category', category);
+                    formData.append('video', videoFile);
+                    
+                    // 使用 Promise 包装 XHR 请求
+                    await new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', '/api/upload', true);
+                        
+                        xhr.upload.onprogress = function(e) {
+                            if (e.lengthComputable) {
+                                const percentComplete = (e.loaded / e.total) * 100;
+                                progress.style.width = percentComplete + '%';
+                            }
+                        };
+                        
+                        xhr.onload = function() {
+                            if (xhr.status === 200) {
+                                successCount++;
+                                statusDiv.innerHTML += `<p style="color: green;">✓ ${videoFile.name} 上传成功</p>`;
+                                resolve();
+                            } else {
+                                failCount++;
+                                statusDiv.innerHTML += `<p style="color: red;">✗ ${videoFile.name} 上传失败: ${xhr.statusText}</p>`;
+                                reject(new Error(xhr.statusText));
+                            }
+                        };
+                        
+                        xhr.onerror = function() {
+                            failCount++;
+                            statusDiv.innerHTML += `<p style="color: red;">✗ ${videoFile.name} 上传失败: 网络错误</p>`;
+                            reject(new Error('网络错误'));
+                        };
+                        
+                        xhr.send(formData);
+                    }).catch(error => {
+                        console.error('上传过程中发生错误:', error);
+                        // 继续上传下一个文件，不中断整个过程
+                    });
+                } catch (error) {
+                    failCount++;
+                    statusDiv.innerHTML += `<p style="color: red;">✗ ${videoFile.name} 上传失败: ${error.message}</p>`;
+                    console.error('上传失败:', error);
+                }
+            }
+            
+            // 所有文件处理完毕后
+            progress.style.width = '100%';
+            statusDiv.innerHTML += `<p><strong>上传完成: ${successCount}/${totalFiles} 个文件成功</strong></p>`;
+            
+            if (successCount > 0) {
+                // 至少有一个文件上传成功，重新加载视频列表
+                loadVideos();
+                
+                // 如果全部成功，3秒后关闭弹窗
+                if (successCount === totalFiles) {
+                    setTimeout(() => {
+                        closeUploadModal();
+                    }, 3000);
+                }
+            }
+        });
+        
+        // 显示上传弹窗
+        function showUploadModal() {
+            document.getElementById('upload-modal').style.display = 'flex';
+            document.getElementById('uploadForm').reset();
+            document.getElementById('upload-progress-bar').style.display = 'none';
+            document.getElementById('upload-progress').style.width = '0%';
+            document.getElementById('upload-status').innerHTML = '';
+        }
+
+        // 关闭上传弹窗
+        function closeUploadModal() {
+            document.getElementById('upload-modal').style.display = 'none';
+        }
+        
+        /**
+         * 页面加载完成后执行
+         * 检查登录状态并恢复上次访问的标签页
+         */
+        window.onload = function() {
+            checkLogin();
+            
+            // 从本地存储获取上次访问的标签页
+            const lastTab = localStorage.getItem('currentAdminTab') || 'videos';
+            const tabElement = document.querySelector(`.tab[onclick*="'${lastTab}'"]`);
+            if (tabElement) {
+                switchTab(lastTab, tabElement);
+            }
+        };
+
+        /**
+         * 延迟加载非关键JavaScript
+         * 在页面完全加载后执行次要功能
+         */
+        window.addEventListener('load', function() {
+            // 延迟加载视频列表
+            setTimeout(function() {
+                if (typeof loadVideos === 'function' && 
+                    document.getElementById('videos-tab').style.display === 'block') {
+                    loadVideos();
+                }
+            }, 100);
+        });
+
+        // 删除视频函数
+        async function deleteVideo(videoId) {
+            // 添加确认提示
+            if (!confirm('确定要删除这个视频吗？此操作不可恢复。')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/videos/${videoId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('删除失败');
+                }
+
+                // 删除成功后重新加载视频列表
+                loadVideos();
+                alert('删除成功');
+            } catch (error) {
+                console.error('删除视频失败:', error);
+                alert('删除失败: ' + error.message);
+            }
+        }
+
+        // 全选/取消全选
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('.video-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+        }
+
+        // 批量删除功能
+        async function deleteSelectedVideos() {
+            const checkboxes = document.querySelectorAll('.video-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert('请选择要删除的视频');
+                return;
+            }
+
+            if (!confirm(`确定要删除选中的 ${checkboxes.length} 个视频吗？此操作不可恢复。`)) {
+                return;
+            }
+
+            const videoIds = Array.from(checkboxes).map(cb => cb.value);
+            let successCount = 0;
+            let failCount = 0;
+
+            for (const id of videoIds) {
+                try {
+                    const response = await fetch(`/api/videos/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                } catch (error) {
+                    console.error('删除视频失败:', error);
+                    failCount++;
+                }
+            }
+
+            // 重新加载视频列表
+            loadVideos();
+            
+            // 显示结果
+            alert(`删除完成：${successCount} 个成功，${failCount} 个失败`);
+        }
+
+        // 添加切换设置页面的函数
+        function switchSettingsTab(tabName, event) {
+            // 阻止事件冒泡，避免触发父级的点击事件
+            event.stopPropagation();
+            
+            // 更新子菜单项的激活状态
+            document.querySelectorAll('.submenu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // 更新设置内容的显示
+            document.querySelectorAll('.settings-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-settings`).classList.add('active');
+            
+            // 更新页面标题
+            const titles = {
+                'index': '首页设置',
+                'password': '密码页面设置',
+                'ad': '广告页面设置',
+                'videos': '视频页面设置'
+            };
+            document.getElementById('currentPageTitle').textContent = titles[tabName];
+            
+            // 确保"网站设置"菜单保持激活状态
+            document.querySelector('.tab[onclick*="settings"]').classList.add('active');
+        }
+
+        // 添加切换侧边栏的函数
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // 在小屏幕上点击菜单项后自动收起侧边栏
+        function autoHideSidebar() {
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,19 @@
+{
+  "indexTitle": "小说合集",
+  "indexDateText": "小说视频合集",
+  "indexPasswordPlaceholder": "输入密码观看",
+  "indexGetPasswordBtn": "点击获取密码",
+  "passwordTitle": "解锁密码规则",
+  "passwordDateTitle": "解锁密码具体规则",
+  "passwordDescription": "点击\"我已了解\"，观看激励广告后自动解锁密码🔓！",
+  "passwordNote": "(更新不易，谢谢支持！)",
+  "passwordUnlockBtn": "我已了解",
+  "adTitle": "开始观看",
+  "adCompleteText": "广告观看完成，您的密码是:",
+  "videosTitle": "视频合集",
+  "videosSearchPlaceholder": "搜索视频...",
+  "videosCategoryAll": "全部",
+  "videosCategoryBeginner": "入门教程",
+  "videosCategoryAdvanced": "进阶教程",
+  "videosNoVideo": "暂无视频"
+}

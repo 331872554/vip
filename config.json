@@ -1,0 +1,19 @@
+{
+  "passwordTitle": "规则要求",
+  "passwordDescription": "观看激励广告后自动解锁密码🔓！点击\"我已了解\"开始",
+  "passwordNote": "(更新不易，谢谢支持！)",
+  "passwordUnlockBtn": "我已了解",
+  "indexTitle": "呱呱小说",
+  "indexDateText": "小说视频",
+  "indexPasswordPlaceholder": "输入密码观看",
+  "indexGetPasswordBtn": "获取密码",
+  "passwordDateTitle": "",
+  "adTitle": "观看广告",
+  "adCompleteText": "广告观看完成，您的密码是:",
+  "videosTitle": "视频合集",
+  "videosSearchPlaceholder": "搜索视频...",
+  "videosCategoryAll": "全部",
+  "videosCategoryBeginner": "最新",
+  "videosCategoryAdvanced": "往期",
+  "videosNoVideo": "暂无视频"
+}
